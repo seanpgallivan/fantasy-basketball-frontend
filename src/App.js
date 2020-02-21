@@ -7,22 +7,37 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import NavBar from './components/NavBar'
 import Home from './components/Home'
-
+import {api} from './services/api'
 
 class App extends Component {
   state = {
     user: null
   }
 
-
-  // User Management
-  login = user => {
-
+  componentDidMount() {
+    if (localStorage.getItem("token")) api.auth.getUser()
+      .then(data => {
+        if (data.error) {
+          console.log(data.error)
+          localStorage.removeItem("token")
+        } else {
+          this.setState({user: data.user})
+          localStorage.setItem("token", data.jwt)
+        }
+      })
   }
+  
 
-  signup = user => {
-
+  // User Management:
+  login = data => {
+    this.setState({user: data.user})
+    localStorage.setItem("token", data.jwt)
   }
+  logout = () => {
+    this.setState({user: null});
+    localStorage.removeItem("token");
+  };
+
 
 
 
@@ -39,16 +54,18 @@ class App extends Component {
             }
           />
           <Route path="/login" exact
-            render={() =>
+            render={props =>
               <Login
+                {...props}
                 onLogin={this.login}
               />
             }
           />
           <Route path="/signup" exact
-            render={() =>
+            render={props =>
               <Signup
-                onSignup={this.signup}
+                {...props}
+                onLogin={this.login}
               />
             }
           />
@@ -61,7 +78,7 @@ class App extends Component {
               )
             }
           />
-          <Route path="/user" exact
+          <Route path="/user/home" exact
             render={() =>
               <Home
 

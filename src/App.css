@@ -24,6 +24,12 @@ button:hover {
   background: teal;
   cursor: pointer;
 }
+button:disabled {
+  background: grey;
+  color: lightgrey;
+  box-shadow: none;
+
+}
 input {
   background-repeat: no-repeat;
   background-size: 30px;
