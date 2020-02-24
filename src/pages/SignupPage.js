@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {api} from '../services/api'
 
-class Signup extends Component {
+class SignupPage extends Component {
   state = {
     form: {
       username: "",
@@ -96,4 +96,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default SignupPage;

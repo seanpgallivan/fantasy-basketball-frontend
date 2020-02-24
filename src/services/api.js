@@ -1,10 +1,11 @@
+// My server backend calls:
 const API_URL = "http://localhost:4000"
 
 const token = () => localStorage.getItem("token")
 
 const headers = () => ({
     "Content-Type": "application/json",
-    Accepts: "application/json",
+    Accept: "application/json",
     Authorization: token()
   })
 
@@ -27,11 +28,43 @@ const postUser = user =>
     body: JSON.stringify(user)
   }).then(r => r.json())
 
+
+
+// data.NBA.net calls via proxy:
+const getTeams = year =>
+  fetch(`/prod/v2/${year}/teams.json`)
+    .then(r => r.json())
+    .then(data => {
+      let teams = {}
+      data.league.standard.forEach(team => 
+        team.isNBAFranchise ? teams[team.teamId] = team : null
+      )
+      return teams
+    })
+
+const getPlayers = year => 
+  getTeams(year)
+    .then(teams => 
+      fetch(`/prod/v1/${year}/players.json`)
+        .then(r => r.json())
+        .then(data => {
+          let players = []
+          data.league.standard.forEach(player => 
+            !!teams[player.teamId] ? players.push(player) : null
+          )
+          return {players: players, teams: teams}
+        })
+    )
+
+const getPlayerStats = (year, personId) =>
+  fetch(`/prod/v1/${year}/players/${personId}_profile.json`)
+    .then(r => r.json())
+    .then(data => data.league.standard.stats)
+
 const getLeague = () => {
-  
+
 }
-
-
+    
 export const api = {
   auth: {
     login,
@@ -39,6 +72,8 @@ export const api = {
     postUser
   },
   data: {
+    getPlayers,
+    getPlayerStats,
     getLeague
   }
 };

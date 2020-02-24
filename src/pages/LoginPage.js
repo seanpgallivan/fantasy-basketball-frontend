@@ -2,13 +2,17 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {api} from '../services/api'
 
-class Login extends Component {
+class LoginPage extends Component {
   state = {
     form: {
       username: "",
       password: ""
     },
     error: false
+  }
+
+  componentDidMount() {
+    if (this.props.user) this.props.history.push('/user/home')
   }
 
   handleChange = e => {
@@ -64,4 +68,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default LoginPage;

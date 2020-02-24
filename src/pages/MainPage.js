@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom'
 
-const Main = (props) => {
+const MainPage = (props) => {
   return (
     <div className="main">
       <div className="logo"></div>
@@ -13,4 +13,4 @@ const Main = (props) => {
   );
 }
 
-export default Main;
+export default MainPage;
