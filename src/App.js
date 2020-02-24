@@ -7,7 +7,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
-import DraftPage from './pages/DraftPage'
+import TeamDraftPage from './pages/TeamDraftPage'
 import {api} from './services/api'
 
 class App extends Component {
@@ -87,9 +87,15 @@ class App extends Component {
     )
   }
 
-  enqueue = player => 
-    this.setState(prev => ({queue: [...prev.queue, player]}))
-
+  enqueue = (player, action) => {
+    let {queue} = this.state
+    let index = queue.findIndex(el => el === player)
+    if (action === "add" && index < 0) queue.push(player)
+    if (action === "add" && index >= 0) queue = queue.filter(p => p !== player)
+    if (action === "up" && index > 0) [queue[index - 1], queue[index]] = [queue[index], queue[index - 1]]
+    if (action === "down" && index < queue.length - 1) [queue[index + 1], queue[index]] = [queue[index], queue[index + 1]]
+    this.setState({queue: queue})
+  }
 
   render() {
     let {user, players, teams, stats, queue} = this.state
@@ -126,7 +132,13 @@ class App extends Component {
                 <NavBar
                   {...props}
                   onLogout={this.logout}
-                />
+
+                  players={players}
+                  teams={teams}
+                  stats={stats}
+                  onLoadPlayers={this.loadPlayers}
+                  onLoadStats={this.loadStats}
+                  />
               // )
             }
           />
@@ -139,7 +151,7 @@ class App extends Component {
           />
           <Route path="/user/draft" exact
             render={() =>
-              <DraftPage
+              <TeamDraftPage
                 players={players}
                 teams={teams}
                 stats={stats}

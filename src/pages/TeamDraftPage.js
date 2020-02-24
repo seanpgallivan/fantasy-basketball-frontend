@@ -1,29 +1,16 @@
 import React, {Component} from 'react';
+import DraftLog from '../containers/DraftLog';
+import DraftQueue from '../containers/DraftQueue';
 import PlayerStats from '../components/PlayerStats'
-import PlayerList from './PlayerList'
+import PlayerList from '../containers/PlayerList'
 
-class PlayerContainer extends Component {
+
+class DraftPage extends Component {
   state = {
     focus: null,
     filter: null,
     sort: "ppg"
   }
-
-  componentDidMount() {
-    // let {players, teams, stats} = this.props
-    // let updated = players.map(player => {
-    //   let team = teams[player.personId]
-    //   let stat = stats[player.personId]
-    //   return {
-    //     ...stat,
-    //     name: player.temporaryDisplayName,
-    //     personId: player.personId,
-    //     team: team.fullName,
-    //     teamcode: team.tricode
-    //   }
-    // })
-  }
-
 
   filterSort = () => {
     let {filter, sort} = this.state
@@ -35,18 +22,25 @@ class PlayerContainer extends Component {
     return filterSorted
   }
 
-
-  // Callbacks:
   setFocus = player => 
     this.setState({focus: player})
 
 
-
   render() {
-    let {players, teams, stats, queue, onLoadPlayers, onLoadStats, onEnqueue} = this.props
+    let {players, teams, stats, queue, onEnqueue} = this.props
 
     return (
-      <>
+      <div className="pane">
+        <DraftLog
+
+        />
+        <DraftQueue
+          queue={queue}
+          teams={teams}
+          stats={stats}
+          onSetFocus={this.setFocus}
+          onEnqueue={onEnqueue}
+        />
         <PlayerStats
           focus={this.state.focus}
         />
@@ -55,14 +49,12 @@ class PlayerContainer extends Component {
           teams={teams}
           stats={stats}
           queue={queue}
-          onLoadPlayers={onLoadPlayers}
-          onLoadStats={onLoadStats}
           onSetFocus={this.setFocus}
           onEnqueue={onEnqueue}
         />
-      </>
-    );
+      </div>
+    )
   }
 }
 
-export default PlayerContainer;
+export default DraftPage;

@@ -1,12 +1,13 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const PlayerList = ({players, teams, stats, focus, queue, onLoadPlayers, onLoadStats, onSetFocus, onEnqueue}) => {
+const PlayerList = ({players, teams, stats, focus, queue, onSetFocus, onEnqueue}) => {
 
   const showPlayers = () => 
     players && teams ? players.map((player, index) => 
       <Player 
         key={index + 1}
+        container="list"
         index={index + 1}
         player={player}
         team={teams[player.teamId]}
@@ -19,18 +20,9 @@ const PlayerList = ({players, teams, stats, focus, queue, onLoadPlayers, onLoadS
 
   return (
     <div className="player-list content">
-      <button 
-        disabled={players && teams}
-        onClick={onLoadPlayers}
-      >
-        Load Players
-      </button>
-      <button 
-        disabled={stats}
-        onClick={onLoadStats}
-      >
-        Load Stats
-      </button>
+      <div className="player-list-header">
+        <h1>Player List</h1>
+      </div>
       <div className="player-list-box">
         {showPlayers()}
       </div>

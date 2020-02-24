@@ -3,7 +3,9 @@ import React from 'react'
 const DraftLog = (props) => {
   return (
     <div className="draft-log content">
-      <h1>DraftLog</h1>
+      <div className="draft-log-header">
+        <h1>Draft Log</h1>
+      </div>
     </div>
   )
 }
