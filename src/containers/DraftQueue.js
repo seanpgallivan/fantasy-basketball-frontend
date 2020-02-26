@@ -1,17 +1,16 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const DraftQueue = ({queue, teams, stats, onSetFocus, onEnqueue}) => {
+const DraftQueue = ({players, franchises, queue, onSetFocus, onEnqueue}) => {
 
   const showPlayers = () => 
-    queue.map((player, index) => 
+    queue.map((id, index) => 
       <Player 
-        key={index + 1}
+        key={id}
         container="queue"
         index={index + 1}
-        player={player}
-        team={teams[player.teamId]}
-        stat={stats ? stats[player.personId].latest : null}
+        player={players[id]}
+        franchise={franchises[players[id].teamId]}
         onSetFocus={onSetFocus}
         onEnqueue={onEnqueue}
       />)

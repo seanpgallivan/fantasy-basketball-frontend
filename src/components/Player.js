@@ -1,18 +1,18 @@
 import React from 'react'
 
-const Player = ({container, index, player, team, stat, queue, onSetFocus, onEnqueue}) => {
+const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqueue}) => {
 
   const handleSetFocus = () =>
     onSetFocus(player)
 
   const handleAddQueue = () => 
-    onEnqueue(player, "add")
+    onEnqueue(player.personId, "add")
 
   const handleUpQueue = () => 
-    onEnqueue(player, "up")
+    onEnqueue(player.personId, "up")
 
   const handleDownQueue = () =>
-    onEnqueue(player, "down")
+    onEnqueue(player.personId, "down")
 
   const showHeader = () => {
     if (container === "list") return (
@@ -21,7 +21,7 @@ const Player = ({container, index, player, team, stat, queue, onSetFocus, onEnqu
           {index}
         </div>
         <div className="stat-sp"></div>
-        <div className={queue ? "check-yes" : "check-no"} onClick={handleAddQueue}></div>
+        <div className={queued ? "check-yes" : "check-no"} onClick={handleAddQueue}></div>
         <div className="stat-sp"></div>
       </>)
     if (container === "queue") return (
@@ -43,7 +43,7 @@ const Player = ({container, index, player, team, stat, queue, onSetFocus, onEnqu
       {showHeader()}
       <div className={container === "list" ? "stat-all-lg" : "stat-all-sm"} onClick={handleSetFocus}>
         <div className="stat-lg">
-          <b>{player.temporaryDisplayName}</b>&nbsp;<i>({team.tricode})</i>
+          <b>{player.temporaryDisplayName}</b>&nbsp;<i>({franchise.tricode})</i>
         </div>
 
         <div className="stat-sm">
@@ -54,42 +54,42 @@ const Player = ({container, index, player, team, stat, queue, onSetFocus, onEnqu
         {container === "list" ? (
           <>
             <div className="stat-sm">
-              {stat.gamesPlayed}
+              {player.stats.latest.gamesPlayed}
             </div>
             <div className="stat-sp"></div>
             <div className="stat-sm">
-              {stat.fgp}
+              {player.stats.latest.fgp}
             </div>
             <div className="stat-sm">
-              {stat.tpp}
+              {player.stats.latest.tpp}
             </div>
             <div className="stat-sm">
-              {stat.ftp}
+              {player.stats.latest.ftp}
             </div>
             <div className="stat-sp"></div>
           </>
         ) : null}
 
         <div className="stat-sm">
-          {stat.ppg}
+          {player.stats.latest.ppg}
         </div>
         <div className="stat-sm">
-          {stat.apg}
+          {player.stats.latest.apg}
         </div>
         <div className="stat-sm">
-          {stat.rpg}
+          {player.stats.latest.rpg}
         </div>
         <div className="stat-sm">
-          {stat.spg}
+          {player.stats.latest.spg}
         </div>
         <div className="stat-sm">
-          {stat.bpg}
+          {player.stats.latest.bpg}
         </div>
         {container === "list" ? (
           <>
             <div className="stat-sp"></div>
             <div className="stat-sm">
-              {stat.topg}
+              {player.stats.latest.topg}
             </div>
           </>
         ) : null}

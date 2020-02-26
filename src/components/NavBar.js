@@ -1,7 +1,7 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
 
-const NavBar = ({history, onLogout, players, teams, stats, onLoadPlayers, onLoadStats}) => {
+const NavBar = ({history, onLogout, loading, onLoadData}) => {
 
   const handleLogout = () => {
     history.push('/login')
@@ -18,18 +18,10 @@ const NavBar = ({history, onLogout, players, teams, stats, onLoadPlayers, onLoad
       <div className="navborderleft"></div>
       <div className="navitemleft">
         <button 
-          disabled={players && teams}
-          onClick={onLoadPlayers}
+          disabled={loading}
+          onClick={onLoadData}
         >
-          Load Players
-        </button>
-      </div>
-      <div className="navitemleft">
-        <button 
-          disabled={stats}
-          onClick={onLoadStats}
-        >
-          Load Stats
+          Load Data
         </button>
       </div>
       <div className="navitemright" onClick={handleLogout}>Log Out</div>

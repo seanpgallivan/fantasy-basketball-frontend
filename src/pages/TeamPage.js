@@ -5,20 +5,24 @@ import PlayerStats from '../components/PlayerStats'
 import PlayerList from '../containers/PlayerList'
 
 
-class DraftPage extends Component {
+class TeamPage extends Component {
   state = {
     focus: null,
     filter: null,
     sort: "ppg"
   }
 
+  componentDidMount() {
+
+  }
+
   filterSort = () => {
     let {filter, sort} = this.state
-    let {players, teams, stats} = this.props
-    if (!players) return players
-    let filterSorted = [...players]
-    if (sort === "ppg") filterSorted.sort((a,b) => parseInt(stats[b.personId].latest.ppg) - parseInt(stats[a.personId].latest.ppg))
-    if (sort === "pm") filterSorted.sort((a,b) => parseInt(stats[b.personId].latest.plusMinus) - parseInt(stats[a.personId].latest.plusMinus))
+    let {players} = this.props
+    let filterSorted = Object.values(players).map(player => player)
+    if (filter === "G") filterSorted.filter(player => player.pos.includes("G"))
+    if (sort === "ppg") filterSorted.sort((a,b) => parseInt(b.stats.latest.ppg) - parseInt(a.stats.latest.ppg))
+    if (sort === "pm") filterSorted.sort((a,b) => parseInt(b.stats.latest.plusMinus) - parseInt(a.stats.latest.plusMinus))
     return filterSorted
   }
 
@@ -27,17 +31,17 @@ class DraftPage extends Component {
 
 
   render() {
-    let {players, teams, stats, queue, onEnqueue} = this.props
+    let {players, franchises, team: {queue, roster}, onEnqueue} = this.props
 
     return (
       <div className="pane">
         <DraftLog
-
+          roster={roster}
         />
         <DraftQueue
+          players={players}
+          franchises={franchises}
           queue={queue}
-          teams={teams}
-          stats={stats}
           onSetFocus={this.setFocus}
           onEnqueue={onEnqueue}
         />
@@ -46,9 +50,9 @@ class DraftPage extends Component {
         />
         <PlayerList
           players={this.filterSort(players)}
-          teams={teams}
-          stats={stats}
+          franchises={franchises}
           queue={queue}
+          roster={roster}
           onSetFocus={this.setFocus}
           onEnqueue={onEnqueue}
         />
@@ -57,4 +61,4 @@ class DraftPage extends Component {
   }
 }
 
-export default DraftPage;
+export default TeamPage;

@@ -7,22 +7,27 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
-import TeamDraftPage from './pages/TeamDraftPage'
+import TeamPage from './pages/TeamPage'
 import {api} from './services/api'
 
 class App extends Component {
   state = {
     user: null,
     year: 2019,
-    players: null,
-    teams: null,
-    stats: null,
-    queue: []
+    players: {},
+    franchises: {},
+    league: {},
+    team: {
+      queue: [],
+      roster: []
+    }
   }
 
   componentDidMount() {
     this.loadUser()
     this.loadStorage()
+    this.loadTeam()
+    this.loadLeague()
   }
   
 
@@ -45,11 +50,17 @@ class App extends Component {
     localStorage.data ? this.setState(JSON.parse(localStorage.data)) : null
 
   setStorage = () => {
-    let {players, teams, stats} = this.state
-    localStorage.data = JSON.stringify({players: players, teams: teams, stats: stats})
+    let {players, franchises} = this.state
+    localStorage.data = JSON.stringify({players: players, franchises: franchises})
   }
 
+  loadLeague = () =>
+    api.server.getLeague(1)
+      .then(data => this.setState({league: data}))
 
+  loadTeam = () => 
+    api.server.getTeam(1)
+      .then(data => this.setState({team: data}))
 
   // User Management:
   login = data => {
@@ -65,40 +76,41 @@ class App extends Component {
 
 
   // Callbacks:
-  loadPlayers = () => 
-    api.data.getPlayers(this.state.year)
-      .then(data => {
-        this.setState(data)
-        this.setStorage()
+  loadAllData = () => {
+    let year = this.state.year
+    api.data.getPlayers(year)
+      .then(({players, franchises}) => {
+        console.log(players)
+        let ids = Object.keys(players),
+            statcount = ids.length
+        ids.forEach(id => 
+          api.data.getPlayerStats(year, id)
+            .then(stats => {
+              console.log()
+              statcount--
+              players[id].stats = stats
+              if (statcount === 0) 
+                this.setState({players: players, franchises: franchises}, this.setStorage)
+            })
+        )
       })
-
-  loadStats = () => {
-    let {year, players} = this.state
-    let stats = {}
-    players.forEach(player =>
-      api.data.getPlayerStats(year, player.personId)
-        .then(stat => {
-          stats[player.personId] = stat
-          if (Object.keys(stats).length === players.length) {
-            this.setState({stats: stats})
-            this.setStorage()
-          }
-        })
-    )
   }
 
-  enqueue = (player, action) => {
-    let {queue} = this.state
-    let index = queue.findIndex(el => el === player)
-    if (action === "add" && index < 0) queue.push(player)
-    if (action === "add" && index >= 0) queue = queue.filter(p => p !== player)
-    if (action === "up" && index > 0) [queue[index - 1], queue[index]] = [queue[index], queue[index - 1]]
-    if (action === "down" && index < queue.length - 1) [queue[index + 1], queue[index]] = [queue[index], queue[index + 1]]
-    this.setState({queue: queue})
+  enqueue = (queueId, action) => {
+    let {team, team: {id, queue}} = this.state
+    let i = queue.findIndex(playerId => playerId === queueId)
+    if (action === "add" && i < 0) queue.push(queueId)
+    if (action === "add" && i >= 0) queue = queue.filter(playerId => playerId !== queueId)
+    if (action === "up" && i > 0) [queue[i - 1], queue[i]] = [queue[i], queue[i - 1]]
+    if (action === "down" && i < queue.length - 1) [queue[i + 1], queue[i]] = [queue[i], queue[i + 1]]
+    this.setState({team: {...team, queue: queue}})
+    api.server.patchTeam({id: id, team: {queue: queue}})
   }
+
+
 
   render() {
-    let {user, players, teams, stats, queue} = this.state
+    let {user, players, franchises, team} = this.state
     return (
       <Router>
         <>
@@ -133,11 +145,11 @@ class App extends Component {
                   {...props}
                   onLogout={this.logout}
 
+                  // take out when getting rid of the button
                   players={players}
-                  teams={teams}
-                  stats={stats}
-                  onLoadPlayers={this.loadPlayers}
-                  onLoadStats={this.loadStats}
+
+                  franchises={franchises}
+                  onLoadData={this.loadAllData}
                   />
               // )
             }
@@ -151,13 +163,10 @@ class App extends Component {
           />
           <Route path="/user/draft" exact
             render={() =>
-              <TeamDraftPage
+              <TeamPage
                 players={players}
-                teams={teams}
-                stats={stats}
-                queue={queue}
-                onLoadPlayers={this.loadPlayers}
-                onLoadStats={this.loadStats}
+                franchises={franchises}
+                team={team}
                 onEnqueue={this.enqueue}
               />
             }

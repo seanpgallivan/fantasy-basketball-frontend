@@ -1,18 +1,17 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const PlayerList = ({players, teams, stats, focus, queue, onSetFocus, onEnqueue}) => {
+const PlayerList = ({players, franchises, focus, queue, onSetFocus, onEnqueue}) => {
 
   const showPlayers = () => 
-    players && teams ? players.map((player, index) => 
+    players ? players.map((player, index) => 
       <Player 
-        key={index + 1}
+        key={player.personId}
         container="list"
         index={index + 1}
         player={player}
-        team={teams[player.teamId]}
-        stat={stats ? stats[player.personId].latest : null}
-        queue={!!queue.find(q => q.personId === player.personId)}
+        franchise={franchises[player.teamId]}
+        queued={queue.includes(player.personId)}
         onSetFocus={onSetFocus}
         onEnqueue={onEnqueue}
       />
