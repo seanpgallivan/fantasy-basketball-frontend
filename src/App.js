@@ -55,7 +55,7 @@ class App extends Component {
   }
 
   loadLeague = () =>
-    api.server.getLeague(1)
+    api.server.getLeague(4)
       .then(data => this.setState({league: data}))
 
   loadTeam = () => 
@@ -80,14 +80,13 @@ class App extends Component {
     let year = this.state.year
     api.data.getPlayers(year)
       .then(({players, franchises}) => {
-        console.log(players)
         let ids = Object.keys(players),
             statcount = ids.length
         ids.forEach(id => 
           api.data.getPlayerStats(year, id)
             .then(stats => {
-              console.log()
               statcount--
+              if (ids.length - statcount % 100 === 0) console.log("fetching player " + (ids.length - statcount) + " of " + ids.length)
               players[id].stats = stats
               if (statcount === 0) 
                 this.setState({players: players, franchises: franchises}, this.setStorage)
@@ -110,7 +109,7 @@ class App extends Component {
 
 
   render() {
-    let {user, players, franchises, team} = this.state
+    let {user, players, franchises, league, team} = this.state
     return (
       <Router>
         <>
@@ -166,6 +165,7 @@ class App extends Component {
               <TeamPage
                 players={players}
                 franchises={franchises}
+                league={league}
                 team={team}
                 onEnqueue={this.enqueue}
               />

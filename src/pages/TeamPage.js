@@ -31,12 +31,15 @@ class TeamPage extends Component {
 
 
   render() {
-    let {players, franchises, team: {queue, roster}, onEnqueue} = this.props
+    let {players, franchises, league, team: {queue, roster}, onEnqueue} = this.props
 
     return (
       <div className="pane">
         <DraftLog
-          roster={roster}
+          players={players}
+          franchises={franchises}
+          league={league}
+          onSetFocus={this.setFocus}
         />
         <DraftQueue
           players={players}

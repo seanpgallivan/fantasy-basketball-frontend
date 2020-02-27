@@ -14,21 +14,13 @@ const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqu
   const handleDownQueue = () =>
     onEnqueue(player.personId, "down")
 
-  const showHeader = () => {
+  const showButtons = () => {
     if (container === "list") return (
       <>
-        <div className="stat-i-sm">
-          {index}
-        </div>
-        <div className="stat-sp"></div>
         <div className={queued ? "check-yes" : "check-no"} onClick={handleAddQueue}></div>
-        <div className="stat-sp"></div>
       </>)
     if (container === "queue") return (
       <>
-        <div className="stat-i-lg">
-          {index}
-        </div>
         <div className="check-x" onClick={handleAddQueue}></div>
         <div className="stat-arrows">
           <div className="arrow-up" onClick={handleUpQueue}></div>
@@ -40,7 +32,10 @@ const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqu
 
   return (
     <div className={container === "list" ? "player-lg" : "player-sm"}>
-      {showHeader()}
+      <div className={container === "list" ? "stat-i-sm" : "stat-i-lg"}>
+        {index}
+      </div>
+      {showButtons()}
       <div className={container === "list" ? "stat-all-lg" : "stat-all-sm"} onClick={handleSetFocus}>
         <div className="stat-lg">
           <b>{player.temporaryDisplayName}</b>&nbsp;<i>({franchise.tricode})</i>

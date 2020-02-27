@@ -195,11 +195,24 @@ input {
   border-bottom: 5px solid black;
 }
 
-.draft-queue-box, .player-list-box {
+.draft-queue-box, .player-list-box, .draft-log-box {
   width: 100%;
   height: calc(100% - 70px);
   padding: 5px 0px;
   overflow-y: auto;
+}
+
+.draft-round {
+  width: 100%;
+  height: max-content;
+  overflow: hidden;
+  padding: 10px 0px;
+}
+
+.draft-name {
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 60px;
 }
 
 .player-stats, .player-list {
@@ -213,12 +226,12 @@ input {
   height: calc(100% - 424px);
 }
 
-.player-lg, .player-sm {
+.player-lg, .player-sm, .draft-turn {
   width: max-content;
   height: 30px;
   float: left;
 }
-.player-sm {
+.player-sm, .draft-turn {
   height: 60px;
 }
 .stat-all-lg, .stat-all-sm {
@@ -229,7 +242,7 @@ input {
   cursor: pointer;
   border: 1px solid black;
 }
-.stat-all-sm {
+.stat-all-sm, .draft-turn {
   width: 310px;
 }
 .stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-yes, .check-x {
