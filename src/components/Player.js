@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqueue}) => {
+const Player = ({container, index, player, player: {stats: {latest}}, franchise, queued, onSetFocus, onEnqueue}) => {
 
   const handleSetFocus = () =>
     onSetFocus(player)
@@ -17,11 +17,11 @@ const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqu
   const showButtons = () => {
     if (container === "list") return (
       <>
-        <div className={queued ? "check-yes" : "check-no"} onClick={handleAddQueue}></div>
+        <div className={queued ? "check-x" : "check-no"} onClick={handleAddQueue}></div>
       </>)
     if (container === "queue") return (
       <>
-        <div className="check-x" onClick={handleAddQueue}></div>
+        <div className="check-x icon-dbl" onClick={handleAddQueue}></div>
         <div className="stat-arrows">
           <div className="arrow-up" onClick={handleUpQueue}></div>
           <div className="arrow-down" onClick={handleDownQueue}></div>
@@ -37,6 +37,10 @@ const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqu
       </div>
       {showButtons()}
       <div className={container === "list" ? "stat-all-lg" : "stat-all-sm"} onClick={handleSetFocus}>
+        <div 
+          className={container === "list" ? "stat-logo-sm" : "stat-logo-lg"} 
+          style={{backgroundImage: `url(https://www.nba.com/assets/logos/teams/primary/web/${franchise.tricode}.svg)`}}
+        ></div>
         <div className="stat-lg">
           <b>{player.temporaryDisplayName}</b>&nbsp;<i>({franchise.tricode})</i>
         </div>
@@ -49,42 +53,42 @@ const Player = ({container, index, player, franchise, queued, onSetFocus, onEnqu
         {container === "list" ? (
           <>
             <div className="stat-sm">
-              {player.stats.latest.gamesPlayed}
+              {latest.gamesPlayed > 0 ? latest.gamesPlayed : '—'}
             </div>
             <div className="stat-sp"></div>
             <div className="stat-sm">
-              {player.stats.latest.fgp}
+              {latest.fgp > 0 ? latest.fgp : '—'}
             </div>
             <div className="stat-sm">
-              {player.stats.latest.tpp}
+              {latest.tpp > 0 ? latest.tpp : '—'}
             </div>
             <div className="stat-sm">
-              {player.stats.latest.ftp}
+              {latest.ftp > 0 ? latest.ftp : '—'}
             </div>
             <div className="stat-sp"></div>
           </>
         ) : null}
 
         <div className="stat-sm">
-          {player.stats.latest.ppg}
+          {latest.ppg > 0 ? latest.ppg : '—'}
         </div>
         <div className="stat-sm">
-          {player.stats.latest.apg}
+          {latest.apg > 0 ? latest.apg : '—'}
         </div>
         <div className="stat-sm">
-          {player.stats.latest.rpg}
+          {latest.rpg > 0 ? latest.rpg : '—'}
         </div>
         <div className="stat-sm">
-          {player.stats.latest.spg}
+          {latest.spg > 0 ? latest.spg : '—'}
         </div>
         <div className="stat-sm">
-          {player.stats.latest.bpg}
+          {latest.bpg > 0 ? latest.bpg : '—'}
         </div>
         {container === "list" ? (
           <>
             <div className="stat-sp"></div>
             <div className="stat-sm">
-              {player.stats.latest.topg}
+              {latest.topg > 0 ? latest.topg : '—'}
             </div>
           </>
         ) : null}

@@ -7,5 +7,4 @@ const HomePage = (props) => {
     </div>
   )
 }
-
 export default HomePage

@@ -31,7 +31,8 @@ class TeamPage extends Component {
 
 
   render() {
-    let {players, franchises, league, team: {queue, roster}, onEnqueue} = this.props
+    let {players, franchises, league, team, team: {queue, roster}, onEnqueue, onDraftPlayer} = this.props
+    let {focus} = this.state
 
     return (
       <div className="pane">
@@ -39,7 +40,9 @@ class TeamPage extends Component {
           players={players}
           franchises={franchises}
           league={league}
+          team={team}
           onSetFocus={this.setFocus}
+          onDraftPlayer={onDraftPlayer}
         />
         <DraftQueue
           players={players}
@@ -49,7 +52,8 @@ class TeamPage extends Component {
           onEnqueue={onEnqueue}
         />
         <PlayerStats
-          focus={this.state.focus}
+          focus={focus}
+          franchise={focus ? franchises[focus.teamId] : null}
         />
         <PlayerList
           players={this.filterSort(players)}

@@ -202,6 +202,16 @@ input {
   overflow-y: auto;
 }
 
+.draft-round-header {
+  height: 62px;
+  width: 200px;
+  margin: auto;
+  text-align: center;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 62px;
+}
+
 .draft-round {
   width: 100%;
   height: max-content;
@@ -209,10 +219,24 @@ input {
   padding: 10px 0px;
 }
 
+.draft-turn button {
+  margin: 5px 0px;
+  padding: 0px 20px;
+  height: 50px;
+  font-size: 18px;
+  width: max-content;
+}
+
 .draft-name {
   font-weight: bold;
   font-size: 24px;
   line-height: 60px;
+}
+.myTurn {
+  color: blue;
+}
+.currentTurn {
+  color: red;
 }
 
 .player-stats, .player-list {
@@ -234,6 +258,35 @@ input {
 .player-sm, .draft-turn {
   height: 60px;
 }
+.stat-logo-lg, .stat-logo-sm {
+  background-repeat: no-repeat;
+  position: absolute;
+  height: 60px;
+  overflow: hidden;
+  z-index: 0;
+
+  /* background-size: 50px;
+  background-position: top;
+  opacity: 0.5;
+  left: 235px;
+  width: 50px; */
+
+  background-size: 200px;
+  background-position: 0px -43px;
+  opacity: 0.3;
+  left: 115px;
+  width: 200px;
+}
+.stat-logo-sm {
+  background-size: 60px;
+  background-position: 0px -12px;
+  opacity: 0.5;
+  left: 260px;
+  width: 60px;
+  height: 32px;
+}
+
+
 .stat-all-lg, .stat-all-sm {
   height: max-content;
   width: max-content;
@@ -241,17 +294,20 @@ input {
   background: lightgreen;
   cursor: pointer;
   border: 1px solid black;
+  position: relative;
 }
 .stat-all-sm, .draft-turn {
   width: 310px;
 }
-.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-yes, .check-x {
+.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-x, .expand-plus, .expand-minus {
   height: 30px;
   width: 50px;
   float: left;
   text-align: center;
   font-size: 18px;
   line-height: 30px;
+  z-index: 1px;
+  position: relative;
 }
 .stat-i-sm, .stat-i-lg {
   cursor: default;
@@ -277,7 +333,7 @@ input {
   float: left;
   overflow: hidden;
 }
-.check-no, .check-yes, .check-x, .arrow-up, .arrow-down {
+.check-no, .check-x, .arrow-up, .arrow-down, .expand-plus, .expand-minus {
   background-image: url('/icon_check_no.png');
   background-size: 26px;
   background-position: center;
@@ -286,12 +342,14 @@ input {
   height: 32px;
   cursor: pointer;
 }
-.check-yes, .check-x {
-  background-image: url('/icon_check_yes.png');
+.icon-dbl {
+  margin: 15px 0px;
+}
+.expand-plus, .expand-minus {
+  margin: 15px 20px;
 }
 .check-x {
   background-image: url('/icon_x.png');
-  height: 62px;
 }
 .arrow-up {
   background-image: url('/icon_up.png');
@@ -300,4 +358,10 @@ input {
 .arrow-down {
   background-image: url('/icon_down.png');
   background-position: top;
+}
+.expand-plus {
+  background-image: url('/icon_plus.png');
+}
+.expand-minus {
+  background-image: url('/icon_minus.png');
 }
