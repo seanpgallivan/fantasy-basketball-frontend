@@ -105,6 +105,20 @@ class App extends Component {
 
 
 
+  // Helper
+  elimPlayers = () => {
+    let {players, league: {teams}, team} = this.state
+    if (teams) {
+      let allRosters = teams.reduce((acc, tm) => acc.concat(tm.roster),[])
+      allRosters.forEach(id => players[id].elim = "picked")
+    }
+
+    return players
+  }
+
+
+
+
   // Callbacks:
   loadAllData = () => {
     let year = this.state.year
@@ -214,7 +228,7 @@ class App extends Component {
           <Route path="/user/draft" exact
             render={() =>
               <TeamPage
-                players={players}
+                players={this.elimPlayers()}
                 franchises={franchises}
                 league={league}
                 team={team}

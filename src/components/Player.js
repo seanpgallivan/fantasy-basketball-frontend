@@ -1,24 +1,20 @@
 import React from 'react'
 
-const Player = ({container, index, player, player: {stats: {latest}}, franchise, queued, onSetFocus, onEnqueue}) => {
+const Player = ({container, index, player, player: {elim, stats: {latest}}, franchise, queued, onSetFocus, onEnqueue}) => {
 
   const handleSetFocus = () =>
     onSetFocus(player)
 
   const handleAddQueue = () => 
     onEnqueue(player.personId, "add")
-
   const handleUpQueue = () => 
     onEnqueue(player.personId, "up")
-
   const handleDownQueue = () =>
     onEnqueue(player.personId, "down")
 
   const showButtons = () => {
-    if (container === "list") return (
-      <>
-        <div className={queued ? "check-x" : "check-no"} onClick={handleAddQueue}></div>
-      </>)
+    if (container === "list" && elim) return <div className="check-elim"></div>
+    if (container === "list") return <div className={queued ? "check-x" : "check-no"} onClick={handleAddQueue}></div>
     if (container === "queue") return (
       <>
         <div className="check-x icon-dbl" onClick={handleAddQueue}></div>
@@ -26,8 +22,8 @@ const Player = ({container, index, player, player: {stats: {latest}}, franchise,
           <div className="arrow-up" onClick={handleUpQueue}></div>
           <div className="arrow-down" onClick={handleDownQueue}></div>
         </div>
-
-      </>)
+      </>
+    )
   }
 
   return (
@@ -36,12 +32,12 @@ const Player = ({container, index, player, player: {stats: {latest}}, franchise,
         {index}
       </div>
       {showButtons()}
-      <div className={container === "list" ? "stat-all-lg" : "stat-all-sm"} onClick={handleSetFocus}>
+      <div className={(container === "list" ? "stat-all-lg" : "stat-all-sm") + (elim && container !== "log" ? " dim" : "")} onClick={handleSetFocus}>
         <div 
           className={container === "list" ? "stat-logo-sm" : "stat-logo-lg"} 
           style={{backgroundImage: `url(https://www.nba.com/assets/logos/teams/primary/web/${franchise.tricode}.svg)`}}
         ></div>
-        <div className="stat-lg">
+        <div className={elim === "picked" && container !== "log" ? "stat-lg line" : "stat-lg"}>
           <b>{player.temporaryDisplayName}</b>&nbsp;<i>({franchise.tricode})</i>
         </div>
 

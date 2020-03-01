@@ -12,14 +12,10 @@ class TeamPage extends Component {
     sort: "ppg"
   }
 
-  componentDidMount() {
-
-  }
-
   filterSort = () => {
-    let {filter, sort} = this.state
     let {players} = this.props
-    let filterSorted = Object.values(players).map(player => player)
+    let {filter, sort} = this.state
+    let filterSorted = Object.values(players)
     if (filter === "G") filterSorted.filter(player => player.pos.includes("G"))
     if (sort === "ppg") filterSorted.sort((a,b) => parseInt(b.stats.latest.ppg) - parseInt(a.stats.latest.ppg))
     if (sort === "pm") filterSorted.sort((a,b) => parseInt(b.stats.latest.plusMinus) - parseInt(a.stats.latest.plusMinus))

@@ -173,6 +173,7 @@ input {
   overflow: hidden;
   background: lightblue;
   box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.4);
+  z-index: -999;
 }
 
 .draft-log, .draft-queue {
@@ -250,6 +251,47 @@ input {
   height: calc(100% - 424px);
 }
 
+.player-img {
+  width: 320px;
+  height: 240px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: bottom;
+  float: left;
+}
+
+.player-box, .player-box-logo {
+  width: calc(100% - 320px);
+  height: 240px;
+  position: absolute;
+  left: 320px;
+}
+.player-box-logo {
+  background-repeat: no-repeat;
+  background-size: 500px;
+  background-position: center;
+  opacity: 0.3;
+}
+
+.player-headline, .player-statline {
+  width: 100%;
+  height: 60px;
+}
+
+.player-statline {
+  height: 180px;
+}
+
+.dim {
+  background: darkolivegreen;
+  opacity: 0.5;
+}
+
+.line {
+  text-decoration: line-through;
+  color: red;
+}
+
 .player-lg, .player-sm, .draft-turn {
   width: max-content;
   height: 30px;
@@ -286,7 +328,6 @@ input {
   height: 32px;
 }
 
-
 .stat-all-lg, .stat-all-sm {
   height: max-content;
   width: max-content;
@@ -299,7 +340,7 @@ input {
 .stat-all-sm, .draft-turn {
   width: 310px;
 }
-.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-x, .expand-plus, .expand-minus {
+.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-x, .check-elim, .expand-plus, .expand-minus {
   height: 30px;
   width: 50px;
   float: left;
@@ -350,6 +391,9 @@ input {
 }
 .check-x {
   background-image: url('/icon_x.png');
+}
+.check-elim {
+  width: 30px;
 }
 .arrow-up {
   background-image: url('/icon_up.png');
