@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Player = ({container, index, player, player: {elim, stats: {latest}}, franchise, queued, onSetFocus, onEnqueue}) => {
+const Player = ({container, index, player, elim, player: {stats: {latest}}, franchise, queued, onSetFocus, onEnqueue}) => {
 
   const handleSetFocus = () =>
     onSetFocus(player)
@@ -37,11 +37,11 @@ const Player = ({container, index, player, player: {elim, stats: {latest}}, fran
           className={container === "list" ? "stat-logo-sm" : "stat-logo-lg"} 
           style={{backgroundImage: `url(https://www.nba.com/assets/logos/teams/primary/web/${franchise.tricode}.svg)`}}
         ></div>
-        <div className={elim === "picked" && container !== "log" ? "stat-lg line" : "stat-lg"}>
+        <div className={elim && elim.picked && container !== "log" ? "stat-lg line" : "stat-lg"}>
           <b>{player.temporaryDisplayName}</b>&nbsp;<i>({franchise.tricode})</i>
         </div>
 
-        <div className="stat-sm">
+        <div className={elim && elim.pos && container !== "log" ? "stat-sm line" : "stat-sm"}>
           {player.pos}
         </div>
         <div className="stat-sp"></div>

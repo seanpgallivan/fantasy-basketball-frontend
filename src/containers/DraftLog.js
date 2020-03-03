@@ -12,7 +12,7 @@ class DraftLog extends Component{
     }))
 
   showDraftRounds = () => {
-    let {players, franchises, league, team, onSetFocus, onDraftPlayer} = this.props
+    let {players, elims, franchises, league, team, onSetFocus, onDraftPlayer} = this.props
     let {expanded} = this.state
     let turnsCount = league.teams.reduce((acc, team) => acc + team.roster.length, 0)
     let roundsCount = Math.floor(turnsCount / league.teams.length) + 1
@@ -24,6 +24,7 @@ class DraftLog extends Component{
           index={i} 
           count={turnsCount}
           players={players}
+          elims={elims}
           franchises={franchises}
           league={league}
           team={team}

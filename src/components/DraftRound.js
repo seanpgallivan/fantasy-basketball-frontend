@@ -1,10 +1,13 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const DraftRound = ({index, count, players, franchises, league, team, league: {teams}, onSetFocus, expanded, onExpandRound, onDraftPlayer}) => {
+const DraftRound = ({index, count, players, elims, franchises, league, team, league: {teams}, onSetFocus, expanded, onExpandRound, onDraftPlayer}) => {
 
-  const topPick = () => 
-    team.queue[0] ? team.queue[0] : "2544"
+  const topPick = () => {
+    let pick = team.queue.find(id => !elims[id])
+    if (!pick) pick = "2544"
+    return pick
+  }
 
   const handleExpand = () => 
     onExpandRound(index, !expanded)
@@ -29,6 +32,7 @@ const DraftRound = ({index, count, players, franchises, league, team, league: {t
             container="log"
             index={teams.length * index + i + 1}
             player={players[player]}
+            elim={elims[player]}
             franchise={franchises[players[player].teamId]}
             onSetFocus={onSetFocus}
           />

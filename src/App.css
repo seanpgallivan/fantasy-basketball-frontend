@@ -267,10 +267,13 @@ input {
   left: 320px;
 }
 .player-box-logo {
+  width: 100%;
   background-repeat: no-repeat;
   background-size: 500px;
   background-position: center;
+  left: 0px;
   opacity: 0.3;
+  z-index: -1;
 }
 
 .player-headline, .player-statline {
@@ -327,7 +330,6 @@ input {
   width: 60px;
   height: 32px;
 }
-
 .stat-all-lg, .stat-all-sm {
   height: max-content;
   width: max-content;

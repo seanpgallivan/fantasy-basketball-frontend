@@ -107,16 +107,100 @@ class App extends Component {
 
   // Helper
   elimPlayers = () => {
-    let {players, league: {teams}, team} = this.state
+    let {players, league, league: {roster_guards, roster_forwards, roster_centers, roster_utility, roster_bench, teams}, team} = this.state
+    let avail = {}
+    if (roster_guards > 0) avail.G = roster_guards
+    if (roster_forwards > 0) avail.F = roster_forwards
+    if (roster_centers > 0) avail.C = roster_centers
+    if (roster_utility + roster_bench > 0) avail.U = roster_utility + roster_bench
+    let posit = team.roster.map(id => players[id].pos.split('-').sort().join(''))
+    console.log(posit)
+    console.log(avail)
+    console.log("-----start-----")
+    posit.sort((a,b) => a.length - b.length)
+    while (posit[0] && posit[0].length === 1 && Object.values(avail).reduce((a,n) => a+n,0) > 0) {
+      let pos = posit.shift()
+      avail[pos] > 0 ? avail[pos]-- : avail.U--
+      Object.keys(avail).forEach(aP => {
+        if (avail[aP] === 0) posit = posit.map(pos => pos.length > 1 ? pos.replace(aP,'') : pos)
+      })
+      posit.sort((a,b) => a.length - b.length)
+      console.log(posit)
+      console.log(avail)
+    }
+    console.log("-----mid-----")
+    for (const key in avail) {
+      let nonPos = posit.filter(pos => !pos.includes(key))
+      let posCount = posit.length - nonPos.length
+      if (0 < posCount && posCount < avail[key]) {
+        avail[key] = avail[key] - posCount
+        posit = nonPos
+      }
+    }
+    console.log(posit)
+    console.log(avail)
+    console.log("-----last-----")
+    posit = posit.reduce((acc, pos) => ({...acc, [pos]: acc[pos] ? acc[pos] + 1 : 1}), {})
+    console.log(avail)
+    console.log(posit)
+    while (Object.values(posit).reduce((a,n) => a+n,0) > 0 && (avail.G + avail.U > 1 || avail.F + avail.U > 1 || avail.C + avail.U > 1)) {
+      if (Object.values(posit).every(val => val === Object.values(posit)[0])) {
+        let next = Object.keys({...avail, U: 0}).reduce((a,b) => avail[a] > avail[b] ? a : b)
+        console.log(next)
+        posit[Object.keys(posit).find(pos => pos.includes(next))]--
+        avail[next]--
+      } else {
+        let next = Object.keys(posit).reduce((a,b) => posit[a] > posit[b] ? a : b)
+        console.log(next)
+        if (avail[next[0]] > avail[next[1]]) {
+          avail[next[0]]--
+        } else if (avail[next[1]] > 0) {
+          avail[next[1]]--
+        } else {
+          avail.U--
+        }
+        posit[next]--
+      }
+      console.log(avail)
+      console.log(posit)
+    }
+    if (Object.values(posit).includes(2)) {
+      let next = Object.keys(posit)[0]
+      avail[next[0]]--
+      avail[next[1]]--
+    } 
+    console.log("-----result-----")
+    console.log(avail)
+    let result = (avail.G + avail.U > 0 ? "G" : "") + (avail.F + avail.U > 0 ? "F" : "") + (avail.C + avail.U > 0 ? "C" : "")
+    console.log(result)
+    
+    let elims = {}
+    if (result.length < 3) Object.values(players).forEach(pl => {
+        if (!result.includes(pl.pos[0]) && !result.includes(pl.pos[2])) {
+          if (!elims[pl.personId]) elims[pl.personId] = {}
+          elims[pl.personId].pos = true
+        }
+    })
+
+
     if (teams) {
       let allRosters = teams.reduce((acc, tm) => acc.concat(tm.roster),[])
-      allRosters.forEach(id => players[id].elim = "picked")
+      allRosters.forEach(id => {
+        if (!elims[id]) elims[id] = {}
+        elims[id].picked = true
+      })
     }
 
-    return players
+
+
+
+
+    return elims
   }
 
 
+    
+  
 
 
   // Callbacks:
@@ -130,7 +214,7 @@ class App extends Component {
           api.data.getPlayerStats(year, id)
             .then(stats => {
               statcount--
-              if (ids.length - statcount % 100 === 0) console.log("fetching player " + (ids.length - statcount) + " of " + ids.length)
+              if ((ids.length - statcount) % 100 === 0) console.log("fetching player " + (ids.length - statcount) + " of " + ids.length)
               players[id].stats = stats
               if (statcount === 0) 
                 this.setState({players: players, franchises: franchises}, this.setStorage)
@@ -151,13 +235,10 @@ class App extends Component {
   }
 
   draftPlayer = playerId => {
-    console.log(playerId)
     let {team: {id, roster}, league} = this.state
     roster.push(playerId)
-    console.log(roster)
     api.server.patchTeam({id: id, team: {roster: roster}})
       .then(updatedTeam => {
-        console.log(updatedTeam)
         api.server.getLeague(league.id)
           .then(updatedLeague => 
             this.setState({
@@ -228,7 +309,8 @@ class App extends Component {
           <Route path="/user/draft" exact
             render={() =>
               <TeamPage
-                players={this.elimPlayers()}
+                players={players}
+                elims={this.elimPlayers()}
                 franchises={franchises}
                 league={league}
                 team={team}

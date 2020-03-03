@@ -1,7 +1,7 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const PlayerList = ({players, franchises, focus, queue, onSetFocus, onEnqueue}) => {
+const PlayerList = ({players, elims, franchises, focus, queue, onSetFocus, onEnqueue}) => {
 
   const showPlayers = () => 
     players ? players.map((player, index) => 
@@ -10,6 +10,7 @@ const PlayerList = ({players, franchises, focus, queue, onSetFocus, onEnqueue}) 
         container="list"
         index={index + 1}
         player={player}
+        elim={elims[player.personId]}
         franchise={franchises[player.teamId]}
         queued={queue.includes(player.personId)}
         onSetFocus={onSetFocus}
