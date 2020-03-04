@@ -107,7 +107,7 @@ class App extends Component {
 
   // Helper
   elimPlayers = () => {
-    let {players, league, league: {roster_guards, roster_forwards, roster_centers, roster_utility, roster_bench, teams}, team} = this.state
+    let {players, league: {roster_guards, roster_forwards, roster_centers, roster_utility, roster_bench, teams}, team} = this.state
     let avail = {}
     if (roster_guards > 0) avail.G = roster_guards
     if (roster_forwards > 0) avail.F = roster_forwards
@@ -141,8 +141,8 @@ class App extends Component {
     console.log(avail)
     console.log("-----last-----")
     posit = posit.reduce((acc, pos) => ({...acc, [pos]: acc[pos] ? acc[pos] + 1 : 1}), {})
-    console.log(avail)
     console.log(posit)
+    console.log(avail)
     while (Object.values(posit).reduce((a,n) => a+n,0) > 0 && (avail.G + avail.U > 1 || avail.F + avail.U > 1 || avail.C + avail.U > 1)) {
       if (Object.values(posit).every(val => val === Object.values(posit)[0])) {
         let next = Object.keys({...avail, U: 0}).reduce((a,b) => avail[a] > avail[b] ? a : b)
@@ -161,8 +161,8 @@ class App extends Component {
         }
         posit[next]--
       }
-      console.log(avail)
       console.log(posit)
+      console.log(avail)
     }
     if (Object.values(posit).includes(2)) {
       let next = Object.keys(posit)[0]
@@ -171,9 +171,9 @@ class App extends Component {
     } 
     console.log("-----result-----")
     console.log(avail)
-    let result = (avail.G + avail.U > 0 ? "G" : "") + (avail.F + avail.U > 0 ? "F" : "") + (avail.C + avail.U > 0 ? "C" : "")
+    let result = "GFC"
+    if (Object.keys(avail).length > 0) result = (avail.G + avail.U > 0 ? "G" : "") + (avail.F + avail.U > 0 ? "F" : "") + (avail.C + avail.U > 0 ? "C" : "")
     console.log(result)
-    
     let elims = {}
     if (result.length < 3) Object.values(players).forEach(pl => {
         if (!result.includes(pl.pos[0]) && !result.includes(pl.pos[2])) {
@@ -181,8 +181,6 @@ class App extends Component {
           elims[pl.personId].pos = true
         }
     })
-
-
     if (teams) {
       let allRosters = teams.reduce((acc, tm) => acc.concat(tm.roster),[])
       allRosters.forEach(id => {
@@ -190,16 +188,8 @@ class App extends Component {
         elims[id].picked = true
       })
     }
-
-
-
-
-
     return elims
   }
-
-
-    
   
 
 

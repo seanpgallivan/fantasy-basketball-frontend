@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import Player from '../components/Player'
 
-const DraftRound = ({index, count, players, elims, franchises, league, team, league: {teams}, onSetFocus, expanded, onExpandRound, onDraftPlayer}) => {
+const DraftRound = ({index, count, players, elims, top, franchises, league, team, league: {teams}, onSetFocus, expanded, onExpandRound, onDraftPlayer}) => {
 
   const topPick = () => {
     let pick = team.queue.find(id => !elims[id])
-    if (!pick) pick = "2544"
+    if (!pick) pick = top
     return pick
   }
 
@@ -38,30 +38,34 @@ const DraftRound = ({index, count, players, elims, franchises, league, team, lea
           />
       } else if (current === order[i] && teams[current].id === team.id) {
         choice = 
-          <div className="player-sm">
-            <div className="stat-i-lg">
-              {teams.length * index + i + 1}
+          <Fragment key={i}>
+            <div className="player-sm">
+              <div className="stat-i-lg">
+                {teams.length * index + i + 1}
+              </div>
+              <div className="draft-turn">
+                <button onClick={handleDraftPlayer}>Draft<br />{players[topPick()].temporaryDisplayName}</button>
+              </div>
             </div>
-            <div className="draft-turn">
-              <button onClick={handleDraftPlayer}>Draft<br />{players[topPick()].temporaryDisplayName}</button>
-            </div>
-          </div>
+          </Fragment>
       } else {
         turnClass = "draft-name"
         if (turn.id === team.id) turnClass += " myTurn"
         if (order[i] === current) turnClass += " currentTurn"
         choice = 
-          <div className="player-sm">
-            <div className="stat-i-lg">
-              {teams.length * index + i + 1}
-            </div>
-            <div className="draft-turn">
-              
-              <div className={turnClass}>
-                {turn.name}
+          <Fragment key={i}>
+            <div className="player-sm">
+              <div className="stat-i-lg">
+                {teams.length * index + i + 1}
+              </div>
+              <div className="draft-turn">
+                
+                <div className={turnClass}>
+                  {turn.name}
+                </div>
               </div>
             </div>
-          </div>
+          </Fragment>
       }
       turns.push(choice)
     }

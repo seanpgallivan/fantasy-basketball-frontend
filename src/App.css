@@ -195,12 +195,20 @@ input {
   overflow: auto;
   border-bottom: 5px solid black;
 }
+.player-list-header {
+  height: auto;
+  border: none;
+}
 
 .draft-queue-box, .player-list-box, .draft-log-box {
   width: 100%;
   height: calc(100% - 70px);
   padding: 5px 0px;
   overflow-y: auto;
+}
+.player-list-box {
+  padding: 0px;
+  height: calc(100% - 55px);
 }
 
 .draft-round-header {
@@ -295,7 +303,7 @@ input {
   color: red;
 }
 
-.player-lg, .player-sm, .draft-turn {
+.player-lg, .player-sm, .draft-turn, .player-lg-header, .player-lg-buff {
   width: max-content;
   height: 30px;
   float: left;
@@ -303,19 +311,29 @@ input {
 .player-sm, .draft-turn {
   height: 60px;
 }
+.player-lg-header {
+  min-width: 100%;
+  position: sticky;
+  top: 0px;
+  z-index: 5;
+  background: lightyellow;
+  border-bottom: 5px solid black;
+  font-weight: bold;
+}
+.stat-team {
+  font-weight: normal;
+  font-style: italic;
+}
+.player-lg-buff {
+  width: 1px;
+  height: 17px;
+}
 .stat-logo-lg, .stat-logo-sm {
   background-repeat: no-repeat;
   position: absolute;
   height: 60px;
   overflow: hidden;
   z-index: 0;
-
-  /* background-size: 50px;
-  background-position: top;
-  opacity: 0.5;
-  left: 235px;
-  width: 50px; */
-
   background-size: 200px;
   background-position: 0px -43px;
   opacity: 0.3;
@@ -342,7 +360,7 @@ input {
 .stat-all-sm, .draft-turn {
   width: 310px;
 }
-.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-x, .check-elim, .expand-plus, .expand-minus {
+.stat-i-sm, .stat-i-lg, .stat-arrows, .stat-sp, .stat-sm, .stat-lg, .check-no, .check-x, .check-elim, .expand-plus, .expand-minus, .stat-header-sp, .stat-header-sp2, .stat-name, .stat-team {
   height: 30px;
   width: 50px;
   float: left;
@@ -352,8 +370,11 @@ input {
   z-index: 1px;
   position: relative;
 }
-.stat-i-sm, .stat-i-lg {
-  cursor: default;
+.stat-header-sp {
+  width: 82px;
+}
+.stat-header-sp2 {
+  width: 181px;
 }
 .stat-i-sm {
   height: 32px;
@@ -369,12 +390,26 @@ input {
 .stat-sp {
   width: 10px;
 }
-.stat-lg {
+.stat-lg, .stat-name, .stat-team {
   width: 310px;
   padding-left: 5px;
   text-align: left;
   float: left;
   overflow: hidden;
+}
+.stat-name, .stat-team {
+  padding: 0px 5px;
+  width: max-content;
+}
+.stat-team {
+  font-weight: normal;
+  font-style: italic;
+}
+.player-lg-header > .stat-sm:hover, .stat-name:hover, .stat-team:hover {
+  border-radius: 10px 10px 0px 0px;
+  color: white;
+  background: darkblue;
+  cursor: pointer;
 }
 .check-no, .check-x, .arrow-up, .arrow-down, .expand-plus, .expand-minus {
   background-image: url('/icon_check_no.png');

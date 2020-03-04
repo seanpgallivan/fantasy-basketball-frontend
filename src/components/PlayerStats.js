@@ -19,7 +19,7 @@ const PlayerStats = ({focus, franchise}) => {
             ></div>
             <div className="player-box">
               <div className="player-headline">
-                <h1>{focus.temporaryDisplayName}</h1>
+                <h1>{focus.firstName + " " + focus.lastName}</h1>
               </div>
               <div className="player-statline">
                 
