@@ -32,8 +32,8 @@ const NavBar = ({players, league, league: {teams, seed_order}, team, history, on
   return (
     <div className="navbar">
       <NavLink to="/"><div className="navlogo"></div></NavLink>
-      {/* <div className="navborderleft"></div>
-      <NavLink to="/user/home"><div className="navitemleft">Home</div></NavLink> */}
+      <div className="navborderleft"></div>
+      <NavLink to="/user/home"><div className="navitemleft">Home</div></NavLink>
       <div className="navborderleft"></div>
       <NavLink to="/user/draft"><div className="navitemleft">Draft</div></NavLink>
       {/* <div className="navborderleft"></div>

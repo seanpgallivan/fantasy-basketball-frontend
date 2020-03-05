@@ -10,13 +10,17 @@ class TeamPage extends Component {
     focus: null,
     seasons: false,
     filter: null,
+    filterAmt: 50,
     sort: "ppg",
-    sortDir: 1
+    sortDir: 1,
+    filterSorted: [],
+    refilter: true
   }
 
+
   filterSort = () => {
-    let {players, franchises} = this.props
-    let {filter, sort, sortDir} = this.state
+    let {players, team: {queue}, franchises, elims} = this.props
+    let {filter, filterAmt, sort, sortDir} = this.state
     let filterSorted = Object.values(players)
     
     if (filter === "G") filterSorted = filterSorted.filter(player => player.pos.includes("G"))
@@ -24,7 +28,6 @@ class TeamPage extends Component {
     if (filter === "C") filterSorted = filterSorted.filter(player => player.pos.includes("C"))
 
 
-    // DON'T USE PARSEINT, drops to integer
     if (sort ==="name" && sortDir % 2 === 1) filterSorted.sort((a,b) => b.temporaryDisplayName > a.temporaryDisplayName ? -1 : 1)
     if (sort ==="name" && sortDir % 2 === 0) filterSorted.sort((a,b) => b.temporaryDisplayName > a.temporaryDisplayName ? 1 : -1)
     if (sort ==="team" && sortDir % 2 === 1) filterSorted.sort((a,b) => franchises[b.teamId].tricode > franchises[a.teamId].tricode ? -1 : 1)
@@ -49,46 +52,55 @@ class TeamPage extends Component {
     if (sort ==="bpg" && sortDir % 2 === 0) filterSorted.sort((a,b) => parseFloat(b.stats.latest.bpg) < parseFloat(a.stats.latest.bpg) ? 1 : -1)
     if (sort ==="topg" && sortDir % 2 === 1) filterSorted.sort((a,b) => parseFloat(b.stats.latest.topg) > parseFloat(a.stats.latest.topg) ? -1 : 1)
     if (sort ==="topg" && sortDir % 2 === 0) filterSorted.sort((a,b) => parseFloat(b.stats.latest.topg) > parseFloat(a.stats.latest.topg) ? 1 : -1)
-
     // if (sort === "pm") filterSorted.sort((a,b) => parseInt(b.stats.latest.plusMinus) - parseInt(a.stats.latest.plusMinus) ? -1 : 1))
-    return filterSorted
+    if (filterSorted.length > 0) this.setState({filterSorted: filterSorted, refilter: false})
   }
 
-  topPlayer = () => 
-    Object.keys(this.props.players).length > 0 ? this.filterSort().find(player => !this.props.elims[player.personId]).personId : "201939"
+  topPick = () => {
+    let {elims, team: {queue}} = this.props
+    let top = queue.find(id => !elims[id])
+    let topP = this.state.filterSorted.find(player => !elims[player.personId])
+    if (topP && !top) top = topP.personId
+    return top
+  }
 
   setFocus = player => 
-    this.setState({focus: player, seasons: true})
+    this.setState({focus: player, seasons: false})
 
   setSort = value => {
     let {filter, sort, sortDir} = this.state
     if (value === "pos") {
-      if (!filter) this.setState({filter: "G"})
-      if (filter === "G") this.setState({filter: "F"})
-      if (filter === "F") this.setState({filter: "C"})
-      if (filter === "C") this.setState({filter: null})
+      if (!filter) this.setState({filter: "G", filterAmt: 50, refilter: true})
+      if (filter === "G") this.setState({filter: "F", filterAmt: 50, refilter: true})
+      if (filter === "F") this.setState({filter: "C", filterAmt: 50, refilter: true})
+      if (filter === "C") this.setState({filter: null, filterAmt: 50, refilter: true})
     } else if (value === sort) {
-      this.setState({sortDir: sortDir + 1})
+      this.setState({sortDir: sortDir + 1, refilter: true})
     } else {
-      this.setState({sort: value, sortDir: 1})
+      this.setState({sort: value, sortDir: 1, filterAmt: 50, refilter: true})
     }
   }
 
   expandSeasons = () =>
     this.setState(prev => ({seasons: !prev.seasons}))
 
+  morePlayers = () => 
+    this.setState(prev => ({filterAmt: prev.filterAmt + 50}))
+
 
 
   render() {
     let {players, elims, franchises, league, team, team: {queue, roster}, onEnqueue, onDraftPlayer} = this.props
-    let {focus, seasons} = this.state
+    let {filterAmt, filterSorted, refilter, focus, seasons, top} = this.state
 
     return (
       <div className="pane">
+        {refilter || elims[top] ? this.filterSort() : null}
         <DraftLog
           players={players}
+          focus={focus}
           elims={elims}
-          top={this.topPlayer()}
+          top={this.topPick()}
           franchises={franchises}
           league={league}
           team={team}
@@ -97,6 +109,7 @@ class TeamPage extends Component {
         />
         <DraftQueue
           players={players}
+          focus={focus}
           elims={elims}
           franchises={franchises}
           queue={queue}
@@ -110,7 +123,9 @@ class TeamPage extends Component {
           onExpandSeasons={this.expandSeasons}
         />
         <PlayerList
-          players={this.filterSort(players)}
+          players={filterSorted.slice(0,filterAmt)}
+          more={Object.keys(players).length - filterAmt}
+          focus={focus}
           elims={elims}
           franchises={franchises}
           queue={queue}
@@ -118,6 +133,7 @@ class TeamPage extends Component {
           onSetSort={this.setSort}
           onSetFocus={this.setFocus}
           onEnqueue={onEnqueue}
+          onMorePlayers={this.morePlayers}
         />
       </div>
     )

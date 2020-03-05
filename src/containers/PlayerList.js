@@ -1,7 +1,7 @@
 import React from 'react'
 import Player from '../components/Player'
 
-const PlayerList = ({players, elims, franchises, focus, queue, onSetSort, onSetFocus, onEnqueue}) => {
+const PlayerList = ({players, more, elims, franchises, focus, queue, onSetSort, onSetFocus, onEnqueue, onMorePlayers}) => {
 
   const showPlayers = () => 
     players ? players.map((player, index) => 
@@ -10,6 +10,7 @@ const PlayerList = ({players, elims, franchises, focus, queue, onSetSort, onSetF
         container="list"
         index={index + 1}
         player={player}
+        focus={focus}
         elim={elims[player.personId]}
         franchise={franchises[player.teamId]}
         queued={queue.includes(player.personId)}
@@ -51,6 +52,9 @@ const PlayerList = ({players, elims, franchises, focus, queue, onSetSort, onSetF
           <div className="stat-sm" onClick={handleFilter} name="topg" title="Turnovers Per Game">TO/G</div>
         </div>
         {showPlayers()}
+        <div className="player-lg-buff"></div>
+        <div className="stat-header-sp"></div>
+        <div className="show-more" onClick={onMorePlayers}>{more > 0 ? `Show ${more > 49 ? "50" : more} more players?` : "All players shown!"}</div>
         <div className="player-lg-buff"></div>
       </div>
     </div>

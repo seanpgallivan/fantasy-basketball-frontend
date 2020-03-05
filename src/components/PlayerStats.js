@@ -10,22 +10,17 @@ const PlayerStats = ({focus, seasons, franchises, onExpandSeasons}) => {
         seg.year = sn.seasonYear
         seg.teamcode = franchises[seg.teamId].tricode
         seg.teamname = franchises[seg.teamId].fullName
-        rows.push(<Season key={rows.length} season={seg}/>)
+        rows.push(<Season key={rows.length} season={seg} onExpandSeasons={onExpandSeasons}/>)
       })
     )
-    let last = <Season key="total" season={focus.stats.careerSummary}/>
-    console.log(seasons)
-    console.log(rows)
+    let last = <Season key="total" season={focus.stats.careerSummary} onExpandSeasons={onExpandSeasons}/>
     return seasons ? [...rows, last] : [rows[0], last]
   }
-
-  const handleExpandSeasons = () => 
-    onExpandSeasons()
   
 
   return (
     <div className="player-stats content">
-      <div className="player-stats-header">
+      <div className="content-header">
         <h1>Player Stats</h1>
       </div>
         {focus ? (
@@ -37,20 +32,27 @@ const PlayerStats = ({focus, seasons, franchises, onExpandSeasons}) => {
             <div className="player-headline">
               <div className="headline-name">{focus.firstName + " " + focus.lastName}</div>
               <div className="headline-team">{franchises[focus.teamId].fullName}</div>
-              <div className="headline-sm">{focus.pos}</div>
-              <div className="headline-sm">{focus.heightFeet}' {focus.heightInches}"</div>
-              <div className="headline-sm">{focus.weightPounds} lbs.</div>
-              <div className="headline-med">{focus.dateOfBirthUTC}</div>
             </div>
 
             <div 
               className="player-img" 
               style={{backgroundImage: `url(https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${focus.personId}.png)`}}
-            >#{focus.jersey}</div>
+            >
+              <div className="jersey-pos">
+                <div className="jersey-box">
+                  <div className="jersey-wrapper">
+                    <div className="jersey-hash">#</div>
+                    <div className="jersey-num">{focus.jersey}</div>
+                  </div>
+                </div>
+                <div className="pos-box">{focus.pos}</div>
+              </div>
+            </div>
 
             <div className="player-statline">
-              <div className="statline-row">Stuff 1 asd fasdfasd fasdf asdf asdf asdfasd fasdfas dfasdfa sdfasdfa s</div>
-              <div className="statline-row">Stuff 2 asdfa sdf sdfreqw frfgewrgjnkjnfkwjebfkwhebfkwef w wne jfwkef we</div>
+              <div className="headline-xs">{focus.heightFeet}' {focus.heightInches}"</div>
+              <div className="headline-xs">{focus.weightPounds} lbs.</div>
+              <div className="headline-xs">{focus.dateOfBirthUTC}</div>
               <div className="statline-header">
                 <div className="statline-xl">
                   <div className="statline-med" title="Season">SEASON</div>

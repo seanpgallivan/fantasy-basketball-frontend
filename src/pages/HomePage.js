@@ -1,9 +1,20 @@
 import React from 'react'
+import LeagueList from '../containers/LeagueList'
+import MessageList from '../containers/MessageList'
+import MessageDetail from '../components/MessageDetail'
 
-const HomePage = (props) => {
+const HomePage = ({user}) => {
   return (
     <div className="pane">
-      <h1>HomePage</h1>
+      <LeagueList
+        
+      />
+      <MessageList
+
+      />
+      <MessageDetail
+
+      />
     </div>
   )
 }

@@ -1,10 +1,12 @@
 import React from 'react'
 
-const Season = ({season: {year, teamcode, gamesPlayed, fgp, tpp, ftp, ppg, apg, rpg, spg, bpg, topg}}) => {
+const Season = ({season: {year, teamcode, gamesPlayed, fgp, tpp, ftp, ppg, apg, rpg, spg, bpg, topg}, onExpandSeasons}) => {
 
+  const handleClick = () => 
+    onExpandSeasons()
 
   return (
-    <div className="statline-row">
+    <div className="statline-row" onClick={handleClick}>
       {year ? (
         <div className="statline-xl">
           <div className="statline-med">{year}</div>

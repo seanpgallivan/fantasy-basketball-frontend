@@ -3,19 +3,11 @@ import Player from '../components/Player'
 
 const DraftRound = ({index, count, players, elims, top, franchises, league, team, league: {teams}, onSetFocus, expanded, onExpandRound, onDraftPlayer}) => {
 
-  const topPick = () => {
-    let pick = team.queue.find(id => !elims[id])
-    if (!pick) pick = top
-    return pick
-  }
-
   const handleExpand = () => 
     onExpandRound(index, !expanded)
 
   const handleDraftPlayer = () =>
-    onDraftPlayer(topPick())
-
-
+    onDraftPlayer(top)
 
   const showTurns = () => {
     let order = index % 2 === 0 ? league.seed_order : [...league.seed_order].reverse()
@@ -44,7 +36,7 @@ const DraftRound = ({index, count, players, elims, top, franchises, league, team
                 {teams.length * index + i + 1}
               </div>
               <div className="draft-turn">
-                <button onClick={handleDraftPlayer}>Draft<br />{players[topPick()].temporaryDisplayName}</button>
+                {top ? <button onClick={handleDraftPlayer}>Draft<br />{players[top].temporaryDisplayName}</button> : null}
               </div>
             </div>
           </Fragment>

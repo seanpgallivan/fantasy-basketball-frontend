@@ -108,18 +108,19 @@ class App extends Component {
   // Helper
   elimPlayers = () => {
     let {players, league: {roster_guards, roster_forwards, roster_centers, roster_utility, roster_bench, teams}, team} = this.state
-    let avail = {}
+    let avail = {}, pos, nonPos, posCount, next
     if (roster_guards > 0) avail.G = roster_guards
     if (roster_forwards > 0) avail.F = roster_forwards
     if (roster_centers > 0) avail.C = roster_centers
     if (roster_utility + roster_bench > 0) avail.U = roster_utility + roster_bench
+    let totalSpots = roster_guards + roster_forwards + roster_centers + roster_utility + roster_bench
     let posit = team.roster.map(id => players[id].pos.split('-').sort().join(''))
     console.log(posit)
     console.log(avail)
     console.log("-----start-----")
     posit.sort((a,b) => a.length - b.length)
     while (posit[0] && posit[0].length === 1 && Object.values(avail).reduce((a,n) => a+n,0) > 0) {
-      let pos = posit.shift()
+      pos = posit.shift()
       avail[pos] > 0 ? avail[pos]-- : avail.U--
       Object.keys(avail).forEach(aP => {
         if (avail[aP] === 0) posit = posit.map(pos => pos.length > 1 ? pos.replace(aP,'') : pos)
@@ -130,8 +131,8 @@ class App extends Component {
     }
     console.log("-----mid-----")
     for (const key in avail) {
-      let nonPos = posit.filter(pos => !pos.includes(key))
-      let posCount = posit.length - nonPos.length
+      nonPos = posit.filter(pos => !pos.includes(key))
+      posCount = posit.length - nonPos.length
       if (0 < posCount && posCount < avail[key]) {
         avail[key] = avail[key] - posCount
         posit = nonPos
@@ -144,13 +145,15 @@ class App extends Component {
     console.log(posit)
     console.log(avail)
     while (Object.values(posit).reduce((a,n) => a+n,0) > 0 && (avail.G + avail.U > 1 || avail.F + avail.U > 1 || avail.C + avail.U > 1)) {
-      if (Object.values(posit).every(val => val === Object.values(posit)[0])) {
-        let next = Object.keys({...avail, U: 0}).reduce((a,b) => avail[a] > avail[b] ? a : b)
+      if (Object.values({GF:0, FC:0, CG:0, ...posit}).every(val => val === Object.values(posit)[0])) {
+        console.log({...avail, U: 0})
+        console.log(Object.keys({...avail, U: 0}))
+        next = Object.keys({...avail, U: 0}).slice(0,3).reduce((a,b) => avail[a] > avail[b] ? a : b)
         console.log(next)
         posit[Object.keys(posit).find(pos => pos.includes(next))]--
         avail[next]--
       } else {
-        let next = Object.keys(posit).reduce((a,b) => posit[a] > posit[b] ? a : b)
+        next = Object.keys(posit).reduce((a,b) => posit[a] > posit[b] ? a : b)
         console.log(next)
         if (avail[next[0]] > avail[next[1]]) {
           avail[next[0]]--
@@ -165,14 +168,15 @@ class App extends Component {
       console.log(avail)
     }
     if (Object.values(posit).includes(2)) {
-      let next = Object.keys(posit)[0]
+      next = Object.keys(posit)[0]
       avail[next[0]]--
       avail[next[1]]--
     } 
     console.log("-----result-----")
     console.log(avail)
     let result = "GFC"
-    if (Object.keys(avail).length > 0) result = (avail.G + avail.U > 0 ? "G" : "") + (avail.F + avail.U > 0 ? "F" : "") + (avail.C + avail.U > 0 ? "C" : "")
+    if (Object.keys(avail).length > 0 && Object.values(avail).reduce((a,b)=>a+b) > 0) 
+      result = (avail.G + avail.U > 0 ? "G" : "") + (avail.F + avail.U > 0 ? "F" : "") + (avail.C + avail.U > 0 ? "C" : "")
     console.log(result)
     let elims = {}
     if (result.length < 3) Object.values(players).forEach(pl => {
