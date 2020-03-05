@@ -1,21 +1,34 @@
-import React from 'react'
+import React, {Component} from 'react'
 import LeagueList from '../containers/LeagueList'
 import MessageList from '../containers/MessageList'
 import MessageDetail from '../components/MessageDetail'
+import { api } from '../services/api'
 
-const HomePage = ({user}) => {
-  return (
-    <div className="pane">
-      <LeagueList
-        
-      />
-      <MessageList
+class HomePage extends Component {
+  state = {
+    messages: []
+  }
 
-      />
-      <MessageDetail
 
-      />
-    </div>
-  )
+  render() {
+    let {user, onLeagueView, history} = this.props
+    let {messages} = this.state
+
+    return (
+      <div className="pane">
+        <LeagueList
+          leagues={user ? user.leagues : []}
+          onLeagueView={onLeagueView}
+          history={history}
+        />
+        <MessageList
+  
+        />
+        <MessageDetail
+  
+        />
+      </div>
+    )
+  }
 }
 export default HomePage

@@ -66,6 +66,10 @@ const getPlayerStats = (year, personId) =>
 
 
 // Server Fetches:
+const getLeagues = () => 
+  fetch(`${API_URL}/leagues`, {
+    headers: auth_headers()
+  }).then(r => r.json())
 const getLeague = id => 
   fetch(`${API_URL}/leagues/${id}`, {
     headers: auth_headers()
@@ -93,6 +97,7 @@ export const api = {
     getPlayerStats
   },
   server: {
+    getLeagues,
     getLeague,
     getTeam,
     patchTeam

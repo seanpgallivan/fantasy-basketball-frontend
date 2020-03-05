@@ -7,27 +7,25 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
+import LeaguePage from './pages/LeaguePage'
 import TeamPage from './pages/TeamPage'
 import {api} from './services/api'
 
 class App extends Component {
   state = {
     user: null,
-    year: 2019,
-    players: {},
-    franchises: {},
-    league: {},
     team: {
       queue: [],
       roster: []
-    }
+    },
+    year: 2019,
+    players: {},
+    franchises: {},
   }
 
   componentDidMount() {
     this.loadUser()
     this.loadStorage()
-    this.loadTeam(1)
-    this.loadLeague(1)
   }
   
 
@@ -54,41 +52,36 @@ class App extends Component {
     let {players, franchises} = this.state
     localStorage.data = JSON.stringify({players: players, franchises: franchises})
   }
-  loadTeam = id => 
-    api.server.getTeam(id)
-      .then(data => this.setState({team: data}))
-  loadLeague = id =>
-    api.server.getLeague(id)
-      .then(data => this.setState({league: data}))
 
   // Take the below out:
   switchLeague = () =>
-    api.server.getLeague(this.state.league.id % 4 + 1)
-      .then(leagueData => 
-        api.server.getTeam(leagueData.teams[0].id)
-          .then(teamData => 
-            this.setState({league: leagueData, team: teamData},
-              this.resetDraft
-            )
-          )
-      )
+    {}
+    // api.server.getLeague(this.state.league.id % 4 + 1)
+    //   .then(leagueData => 
+    //     api.server.getTeam(leagueData.teams[0].id)
+    //       .then(teamData => 
+    //         this.setState({league: leagueData, team: teamData},
+    //           this.resetDraft
+    //         )
+    //       )
+    //   )
   resetDraft = () => {
-    let {league, league: {teams}} = this.state
-    let count = teams.length
-    teams.forEach(tm => {
-      count--
-      api.server.patchTeam({id: tm.id, team: {roster: []}})
-        .then(() => {
-          if (count === 0) 
-            api.server.getLeague(league.id)
-              .then(leagueData => 
-                api.server.getTeam(leagueData.teams[0].id)
-                  .then(teamData => 
-                    this.setState({league: leagueData, team: teamData})
-                  )
-              )
-        })
-    })
+    // let {league, league: {teams}} = this.state
+    // let count = teams.length
+    // teams.forEach(tm => {
+    //   count--
+    //   api.server.patchTeam({id: tm.id, team: {roster: []}})
+    //     .then(() => {
+    //       if (count === 0) 
+    //         api.server.getLeague(league.id)
+    //           .then(leagueData => 
+    //             api.server.getTeam(leagueData.teams[0].id)
+    //               .then(teamData => 
+    //                 this.setState({league: leagueData, team: teamData})
+    //               )
+    //           )
+    //     })
+    // })
   }
   // Take the above out:
 
@@ -99,22 +92,32 @@ class App extends Component {
     localStorage.token = data.jwt
   }
   logout = () => {
-    this.setState({user: null});
+    this.setState({
+      user: null, 
+      team: {
+        queue: [],
+        roster: []
+      }
+    });
     localStorage.removeItem("token");
   };
 
 
 
-  // Helper
+  // Helpers:
+  findLeague = (id=this.state.team.leagueId) => 
+    this.state.user.leagues.find(leag => leag.id === id)
+
   elimPlayers = () => {
-    let {players, league: {roster_guards, roster_forwards, roster_centers, roster_utility, roster_bench, teams}, team} = this.state
+    let {user, team, players} = this.state
+    let {rost_g, rost_f, rost_c, rost_u, rost_b, max_players, teams} = this.findLeague()
+    let {roster} = team
     let avail = {}, pos, nonPos, posCount, next
-    if (roster_guards > 0) avail.G = roster_guards
-    if (roster_forwards > 0) avail.F = roster_forwards
-    if (roster_centers > 0) avail.C = roster_centers
-    if (roster_utility + roster_bench > 0) avail.U = roster_utility + roster_bench
-    let totalSpots = roster_guards + roster_forwards + roster_centers + roster_utility + roster_bench
-    let posit = team.roster.map(id => players[id].pos.split('-').sort().join(''))
+    if (rost_g > 0) avail.G = rost_g
+    if (rost_f > 0) avail.F = rost_f
+    if (rost_c > 0) avail.C = rost_c
+    if (rost_u + rost_b > 0) avail.U = rost_u + rost_b
+    let posit = roster.map(id => players[id].pos.split('-').sort().join(''))
     console.log(posit)
     console.log(avail)
     console.log("-----start-----")
@@ -185,38 +188,42 @@ class App extends Component {
           elims[pl.personId].pos = true
         }
     })
-    if (teams) {
-      let allRosters = teams.reduce((acc, tm) => acc.concat(tm.roster),[])
-      allRosters.forEach(id => {
-        if (!elims[id]) elims[id] = {}
-        elims[id].picked = true
-      })
-    }
+    let allRosters = teams.reduce((acc, tm) => acc.concat(tm.roster),[])
+    allRosters.forEach(id => {
+      if (!elims[id]) elims[id] = {}
+      elims[id].picked = true
+    })
     return elims
   }
   
 
 
   // Callbacks:
-  loadAllData = () => {
-    let year = this.state.year
-    api.data.getPlayers(year)
-      .then(({players, franchises}) => {
-        let ids = Object.keys(players),
-            statcount = ids.length
-        ids.forEach(id => 
-          api.data.getPlayerStats(year, id)
-            .then(stats => {
-              statcount--
-              if ((ids.length - statcount) % 100 === 0) console.log("fetching player " + (ids.length - statcount) + " of " + ids.length)
-              players[id].stats = stats
-              if (statcount === 0) 
-                this.setState({players: players, franchises: franchises}, this.setStorage)
-            })
-        )
-      })
-  }
+  // loadAllData = () => {
+  //   let year = this.state.year
+  //   api.data.getPlayers(year)
+  //     .then(({players, franchises}) => {
+  //       let ids = Object.keys(players),
+  //           statcount = ids.length
+  //       ids.forEach(id => 
+  //         api.data.getPlayerStats(year, id)
+  //           .then(stats => {
+  //             statcount--
+  //             if ((ids.length - statcount) % 100 === 0) console.log("fetching player " + (ids.length - statcount) + " of " + ids.length)
+  //             players[id].stats = stats
+  //             if (statcount === 0) 
+  //               this.setState({players: players, franchises: franchises}, this.setStorage)
+  //           })
+  //       )
+  //     })
+  // }
 
+  leagueView = (id, history, route) => {
+    let team = this.findLeague(id).teams.find(tm => tm.user_id === this.state.user.id)
+    this.setState({team: {...team, leagueId: id}},
+      history.push('/user/' + route)
+    )
+  }
   enqueue = (queueId, action) => {
     let {team, team: {id, queue}} = this.state
     let i = queue.findIndex(playerId => playerId === queueId)
@@ -226,27 +233,22 @@ class App extends Component {
     if (action === "down" && i < queue.length - 1) [queue[i + 1], queue[i]] = [queue[i], queue[i + 1]]
     this.setState({team: {...team, queue: queue}})
     api.server.patchTeam({id: id, team: {queue: queue}})
+      .then(this.loadUser)
   }
 
   draftPlayer = playerId => {
-    let {team: {id, roster}, league} = this.state
+    let {team, team: {id, roster}} = this.state
     roster.push(playerId)
+    this.setState({team: {...team, roster: roster}})
     api.server.patchTeam({id: id, team: {roster: roster}})
-      .then(updatedTeam => {
-        api.server.getLeague(league.id)
-          .then(updatedLeague => 
-            this.setState({
-              team: updatedTeam, 
-              league: updatedLeague
-            })
-          )
-      })
+      .then(this.loadUser)
   }
 
 
 
   render() {
-    let {user, players, franchises, league, team} = this.state
+    let {user, players, franchises, team} = this.state
+    let league = team.id ? this.findLeague() : {}
     return (
       <Router>
         <>
@@ -280,6 +282,7 @@ class App extends Component {
                 <NavBar
                   {...props}
                   onLogout={this.logout}
+                  user={user}
 
                   // take out when getting rid of the button
                   players={players}
@@ -287,24 +290,33 @@ class App extends Component {
                   team={team}
                   onLoadTeam={this.loadTeam}
                   onLoadData={this.loadAllData}
-                  onSwitchLeague={this.switchLeague}
                   onResetDraft={this.resetDraft}
                   />
               // )
             }
           />
           <Route path="/user/home" exact
-            render={() =>
+            render={props =>
               <HomePage
+                {...props}
+                user={user}
+                onLeagueView={this.leagueView}
+              />
+            }
+          />
+          <Route path="/user/league" exact
+            render={() =>
+              <LeaguePage
                 user={user}
               />
             }
           />
-          <Route path="/user/draft" exact
-            render={() =>
+          <Route path="/user/team" exact
+            render={props =>
               <TeamPage
+                {...props}
                 players={players}
-                elims={this.elimPlayers()}
+                elims={user && team.id ? this.elimPlayers() : {}}
                 franchises={franchises}
                 league={league}
                 team={team}

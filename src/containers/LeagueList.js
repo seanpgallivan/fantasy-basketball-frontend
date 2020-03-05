@@ -1,8 +1,17 @@
 import React from 'react'
 import League from '../components/League'
 
-const LeagueList = (props) => {
+const LeagueList = ({history, leagues, onLeagueView}) => {
 
+  const showLeagues = () => 
+    leagues.map((league, i) => 
+      <League 
+        key={i} 
+        history={history}
+        league={league} 
+        onLeagueView={onLeagueView}
+      />
+    )
 
 
   return (
@@ -11,7 +20,7 @@ const LeagueList = (props) => {
         <h1>League List</h1>
       </div>
       <div className="content-box">
-
+        {showLeagues()}
 
       </div>
     </div>

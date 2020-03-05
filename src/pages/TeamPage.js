@@ -17,6 +17,10 @@ class TeamPage extends Component {
     refilter: true
   }
 
+  componentDidMount() {
+    if (!this.props.team.id) this.props.history.push('/user/home')
+  }
+
 
   filterSort = () => {
     let {players, team: {queue}, franchises, elims} = this.props

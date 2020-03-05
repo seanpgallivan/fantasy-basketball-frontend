@@ -1,4 +1,8 @@
-h1, h2, h4 {
+p {
+  margin: 5px 10px;
+}
+
+h1, h2, h3, h4 {
   margin: 10px;
   text-align: center;
 }  
@@ -134,7 +138,7 @@ input {
   float: left;
 }
 
-.navitemleft, .navitemright {
+.navitemleft, .navitemright, .navinforight {
   width: 150px;
   height: 100%;
   font-size: 24px;
@@ -144,13 +148,21 @@ input {
   cursor: pointer;
   float: left;
 }
-.navitemright {
+.navitemright, .navinforight {
   float: right;
+}
+.navinforight {
+  width: 350px;
+  color: blue;
+  text-align: right;
+  margin-right: 40px;
+  cursor: default;
 }
 .navborderleft, .navborderright {
   width: 1px;
   height: 30px;
-  margin: 15px 0px;
+  margin: 15px 3px;
+  border: 1px solid lightgrey;
   background: lightgrey;
   float: left;
 }
@@ -610,4 +622,21 @@ input {
 .show-more:hover {
   background: #cbf5cb;
   color: #248824;
+}
+.league-card {
+  margin: 20px;
+  padding: 10px;
+  border: 2px solid black;
+  background: #e6e5e5;
+  border-radius: 20px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.4);
+}
+.center-wrapper {
+  width: max-content;
+  margin: auto;
+}
+.league-card > .center-wrapper > button {
+  width: 200px;
+  height: 35px;
+  font-size: 20px;
 }
